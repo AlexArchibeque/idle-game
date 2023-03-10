@@ -1,8 +1,6 @@
 import { type NextPage } from "next";
 import React from "react";
-
 import { PlayerStatsScreen, EnemyStatsScreen } from "../../components/stats";
-
 import { Fight } from "~/game/main";
 
 export interface FightStats {
@@ -13,6 +11,7 @@ export interface FightStats {
   enemy?: {
     stength: number;
     health: number;
+    mana?: number;
   };
 }
 
@@ -29,8 +28,8 @@ const MainGameScreen: NextPage = () => {
   const [fightStats, setFightStats] = React.useState(DefaultFightStats);
 
   React.useEffect(() => {
-    Fight(counter);
-  }, [counter]);
+    const result = Fight(fightStats);
+  }, [counter, fightStats]);
 
   React.useEffect(() => {
     if (isLoaded) {

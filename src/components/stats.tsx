@@ -2,8 +2,8 @@ import { type FightStats } from "../pages/game";
 
 const PlayerStatsScreen = ({ fightStats }: { fightStats: FightStats }) => {
   return (
-    <main className="flex h-80 w-32 flex-col bg-slate-800 p-4">
-      <div>Stats:</div>
+    <main className="flex h-80 w-32 flex-col bg-slate-800 p-4 text-white">
+      <div>PLAYER STATS SCREEN Stats:</div>
       <div>Str:</div>
       <div>Dex:</div>
       <div>Con:</div>
@@ -17,7 +17,7 @@ const PlayerStatsScreen = ({ fightStats }: { fightStats: FightStats }) => {
 
 const EnemyStatsScreen = ({ fightStats }: { fightStats: FightStats }) => {
   return (
-    <main className="flex h-80 w-32 flex-col bg-slate-800 p-4">
+    <main className="flex h-80 w-32 flex-col bg-slate-800 p-4 text-white">
       <div>MAJOR ENEMY</div>
       <div>Health</div>
       <div>100/100</div>
