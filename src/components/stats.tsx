@@ -1,28 +1,42 @@
-import { type FightStats } from "../pages/game";
+import useGameStore from "~/game/gameState";
 
-const PlayerStatsScreen = ({ fightStats }: { fightStats: FightStats }) => {
+const PlayerStatsScreen = () => {
+  const { playerStats } = useGameStore();
+  const [currentHealth, maxHealth] = playerStats.health;
+  const [currentMana, maxMana] = playerStats.mana;
   return (
     <main className="flex h-80 w-32 flex-col bg-slate-800 p-4 text-white">
       <div>PLAYER STATS SCREEN Stats:</div>
-      <div>Str:</div>
-      <div>Dex:</div>
-      <div>Con:</div>
+      <div>Str: {playerStats.str}</div>
+      <div>Dex: {playerStats.dex}</div>
+      <div>Con: {playerStats.con}</div>
       <div>Health</div>
-      <div>100/100</div>
+      <div>
+        {currentHealth}/{maxHealth}
+      </div>
       <div>Mana</div>
-      <div>100/100</div>
+      <div>
+        {currentMana}/{maxMana}
+      </div>
     </main>
   );
 };
 
-const EnemyStatsScreen = ({ fightStats }: { fightStats: FightStats }) => {
+const EnemyStatsScreen = () => {
+  const { enemyStats } = useGameStore();
+  const [currentHealth, maxHealth] = enemyStats.health;
+  const [currentMana, maxMana] = enemyStats.mana;
   return (
     <main className="flex h-80 w-32 flex-col bg-slate-800 p-4 text-white">
       <div>MAJOR ENEMY</div>
       <div>Health</div>
-      <div>100/100</div>
+      <div>
+        {currentHealth}/{maxHealth}
+      </div>
       <div>Mana</div>
-      <div>100/100</div>
+      <div>
+        {currentMana}/{maxMana}
+      </div>
     </main>
   );
 };

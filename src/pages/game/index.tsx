@@ -3,57 +3,38 @@ import React from "react";
 import { PlayerStatsScreen, EnemyStatsScreen } from "../../components/stats";
 import { Fight } from "~/game/main";
 
-export interface FightStats {
-  player: {
-    health: number;
-    mana: number;
-  };
-  enemy?: {
-    stength: number;
-    health: number;
-    mana?: number;
-  };
-}
-
-const DefaultFightStats: FightStats = {
-  player: {
-    health: 100,
-    mana: 100,
-  },
-};
+import useGameStore from "~/game/gameState";
 
 const MainGameScreen: NextPage = () => {
   const [counter, setCounter] = React.useState(0);
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [fightStats, setFightStats] = React.useState(DefaultFightStats);
+  const { setGameIsRunning, gameIsRunning } = useGameStore();
 
   React.useEffect(() => {
-    const result = Fight(fightStats);
-  }, [counter, fightStats]);
+    Fight();
+  }, [counter]);
 
   React.useEffect(() => {
-    if (isLoaded) {
+    if (gameIsRunning) {
       const interval = setInterval(() => setCounter((val) => val + 1), 1000);
       return () => {
         clearInterval(interval);
       };
     }
-  }, [isLoaded]);
+  }, [gameIsRunning]);
 
   const startGame = () => {
-    setIsLoaded(!isLoaded);
+    setGameIsRunning();
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
       <button onClick={startGame}>
-        {isLoaded ? "STOP THE GAME" : "START THE GAME"}
+        {gameIsRunning ? "STOP THE GAME" : "START THE GAME"}
       </button>
       <div className="text-white">${counter}</div>
-
       <div className="flex">
-        <PlayerStatsScreen fightStats={fightStats} />
-        <EnemyStatsScreen fightStats={fightStats} />
+        <PlayerStatsScreen />
+        <EnemyStatsScreen />
       </div>
     </main>
   );
