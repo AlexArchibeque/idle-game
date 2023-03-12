@@ -29,8 +29,8 @@ const defaultPlayerStats = {
 };
 
 const defaultEnemyStats = {
-  health: [100, 100],
-  mana: [100, 100],
+  health: [20, 20],
+  mana: [20, 20],
 };
 
 const useGameStore = create<GameState>((set) => ({

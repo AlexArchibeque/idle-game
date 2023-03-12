@@ -6,7 +6,7 @@ const PlayerStatsScreen = () => {
   const [currentMana, maxMana] = playerStats.mana;
   return (
     <main className="flex h-80 w-32 flex-col bg-slate-800 p-4 text-white">
-      <div>PLAYER STATS SCREEN Stats:</div>
+      <div>PLAYER</div>
       <div>Str: {playerStats.str}</div>
       <div>Dex: {playerStats.dex}</div>
       <div>Con: {playerStats.con}</div>

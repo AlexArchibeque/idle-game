@@ -32,8 +32,9 @@ const MainGameScreen: NextPage = () => {
         {gameIsRunning ? "STOP THE GAME" : "START THE GAME"}
       </button>
       <div className="text-white">${counter}</div>
-      <div className="flex">
+      <div className="flex gap-4">
         <PlayerStatsScreen />
+        <div>SOMETHING HAPPENED HERE * LOG *</div>
         <EnemyStatsScreen />
       </div>
     </main>
