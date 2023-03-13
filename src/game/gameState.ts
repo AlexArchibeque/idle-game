@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import { produce } from "immer";
 
 interface GameState {
@@ -39,27 +40,21 @@ const defaultEnemyStats: EnemyStats = {
   damage: [1, 5],
 };
 
-const useGameStore = create<GameState>((set) => ({
-  gameIsRunning: false,
-  playerStats: defaultPlayerStats,
-  enemyStats: defaultEnemyStats,
-  setGameIsRunning: () =>
-    set((state) => ({ gameIsRunning: !state.gameIsRunning })),
-  setFightConclusion: (playerHealth: number, enemyHealth: number) => {
-    console.log(playerHealth);
-    console.log(enemyHealth);
-
-    const newPlayerHealth: number[] = [playerHealth, 100];
-    const newEnemyHealth: number[] = [enemyHealth, 100];
-    set(
-      produce((state) => {
-        state.playerStats.health = newPlayerHealth;
-        state.enemyStats.health = newEnemyHealth;
-      })
-    );
-    // set((state) => ({ playerStats: { health: [playerHealth, 100] } }));
-  },
-}));
+const useGameStore = create(
+  immer<GameState>((set) => ({
+    gameIsRunning: false,
+    playerStats: defaultPlayerStats,
+    enemyStats: defaultEnemyStats,
+    setGameIsRunning: () =>
+      set((state: GameState) => ({ gameIsRunning: !state.gameIsRunning })),
+    setFightConclusion: (playerHealth: number, enemyHealth: number) => {
+      set((state: GameState) => {
+        state.playerStats.health[0] = playerHealth;
+        state.enemyStats.health[0] = enemyHealth;
+      });
+    },
+  }))
+);
 
 export default useGameStore;
 

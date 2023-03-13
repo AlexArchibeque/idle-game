@@ -18,12 +18,28 @@ const MainGameScreen: NextPage = () => {
   // setFightConclusion(20, 20);
 
   React.useEffect(() => {
-    if (gameIsRunning) {
+    if (
+      gameIsRunning &&
+      playerStats !== undefined &&
+      enemyStats !== undefined
+    ) {
       const { newPlayerHealth, newEnemyHealth } = Fight(
         playerStats,
         enemyStats
       );
-      setFightConclusion(newPlayerHealth, newEnemyHealth);
+
+      if (newPlayerHealth <= 0) {
+        // Set game to resting
+        // Regen HP
+        setFightConclusion(0, newEnemyHealth);
+      } else if (newEnemyHealth <= 0) {
+        // Generate new enemy
+        // Give experience
+        // Roll for items
+        setFightConclusion(newPlayerHealth, 0);
+      } else {
+        setFightConclusion(newPlayerHealth, newEnemyHealth);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
