@@ -18,7 +18,6 @@ const MainGameScreen: NextPage = () => {
     setFightConclusion,
   } = useGameStore();
 
-  // setFightConclusion(20, 20);
   const checkFightLogSize = (log: string[]): string[] => {
     if (log.length > 30) {
       return log.slice(10);
@@ -71,7 +70,7 @@ const MainGameScreen: NextPage = () => {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-      <button onClick={startGame}>
+      <button onClick={startGame} className="bg-slate-800 text-white">
         {gameIsRunning ? "STOP THE GAME" : "START THE GAME"}
       </button>
       <div className="text-white">${counter}</div>
