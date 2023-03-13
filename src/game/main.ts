@@ -30,6 +30,8 @@ const Fight = (playerStats: PlayerStats, enemyStats: EnemyStats) => {
   return {
     newPlayerHealth,
     newEnemyHealth,
+    playerDamage: playerDamage || "0",
+    enemyDamage: enemyDamage || "0",
   };
 };
 
