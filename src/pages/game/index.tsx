@@ -19,8 +19,8 @@ const MainGameScreen: NextPage = () => {
   } = useGameStore();
 
   const checkFightLogSize = (log: string[]): string[] => {
-    if (log.length > 30) {
-      return log.slice(10);
+    if (log.length > 50) {
+      return log.slice(40);
     }
     return log;
   };
