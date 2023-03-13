@@ -7,10 +7,25 @@ import useGameStore from "~/game/gameState";
 
 const MainGameScreen: NextPage = () => {
   const [counter, setCounter] = React.useState(0);
-  const { setGameIsRunning, gameIsRunning } = useGameStore();
+  const {
+    setGameIsRunning,
+    gameIsRunning,
+    playerStats,
+    enemyStats,
+    setFightConclusion,
+  } = useGameStore();
+
+  // setFightConclusion(20, 20);
 
   React.useEffect(() => {
-    Fight();
+    if (gameIsRunning) {
+      const { newPlayerHealth, newEnemyHealth } = Fight(
+        playerStats,
+        enemyStats
+      );
+      setFightConclusion(newPlayerHealth, newEnemyHealth);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
 
   React.useEffect(() => {

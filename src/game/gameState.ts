@@ -1,36 +1,42 @@
 import { create } from "zustand";
+import { produce } from "immer";
 
 interface GameState {
   gameIsRunning: boolean;
   playerStats: PlayerStats;
   enemyStats: EnemyStats;
   setGameIsRunning: () => void;
+  setFightConclusion: (playerHealth: number, enemyHealth: number) => void;
 }
 
-interface PlayerStats {
+export interface PlayerStats {
   health: number[];
   mana: number[];
   str: number;
   dex: number;
   con: number;
+  damage: number[];
 }
 
-interface EnemyStats {
+export interface EnemyStats {
   health: number[];
   mana: number[];
+  damage: number[];
 }
 
-const defaultPlayerStats = {
+const defaultPlayerStats: PlayerStats = {
   health: [100, 100],
   mana: [100, 100],
+  damage: [1, 10],
   str: 10,
   dex: 10,
   con: 10,
 };
 
-const defaultEnemyStats = {
+const defaultEnemyStats: EnemyStats = {
   health: [20, 20],
   mana: [20, 20],
+  damage: [1, 5],
 };
 
 const useGameStore = create<GameState>((set) => ({
@@ -39,6 +45,20 @@ const useGameStore = create<GameState>((set) => ({
   enemyStats: defaultEnemyStats,
   setGameIsRunning: () =>
     set((state) => ({ gameIsRunning: !state.gameIsRunning })),
+  setFightConclusion: (playerHealth: number, enemyHealth: number) => {
+    console.log(playerHealth);
+    console.log(enemyHealth);
+
+    const newPlayerHealth: number[] = [playerHealth, 100];
+    const newEnemyHealth: number[] = [enemyHealth, 100];
+    set(
+      produce((state) => {
+        state.playerStats.health = newPlayerHealth;
+        state.enemyStats.health = newEnemyHealth;
+      })
+    );
+    // set((state) => ({ playerStats: { health: [playerHealth, 100] } }));
+  },
 }));
 
 export default useGameStore;
