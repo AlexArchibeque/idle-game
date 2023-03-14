@@ -37,7 +37,7 @@ const defaultPlayerStats: PlayerStats = {
   mana: [100, 100],
   damage: [1, 10],
   attackSpeed: 1.0,
-  critPercentage: 0.0,
+  critPercentage: 0.5,
   critDamage: 1.5,
   str: 10,
   dex: 10,

@@ -4,6 +4,10 @@ const randomInteger = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+const determineCritDamage = (damage: number, critDamage: number): number => {
+  return Math.ceil(damage * critDamage);
+};
+
 const Fight = (
   playerStats: PlayerStats,
   enemyStats: EnemyStats,
@@ -21,7 +25,8 @@ const Fight = (
 
     // Crit calculations
     const isCrit = Math.random() <= playerStats.critPercentage;
-    if (isCrit) playerDamage = Math.ceil(playerDamage * playerStats.critDamage);
+    if (isCrit)
+      playerDamage = determineCritDamage(playerDamage, playerStats.critDamage);
 
     const newEnemyHealth =
       (enemyStats.health[0] && enemyStats.health[0] - playerDamage) || 0;
