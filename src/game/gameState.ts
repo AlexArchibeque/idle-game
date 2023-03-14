@@ -6,7 +6,10 @@ interface GameState {
   playerStats: PlayerStats;
   enemyStats: EnemyStats;
   setGameIsRunning: () => void;
-  setFightConclusion: (playerHealth: number, enemyHealth: number) => void;
+  setFightConclusion: (
+    playerHealth: number | null,
+    enemyHealth: number | null
+  ) => void;
 }
 
 export interface PlayerStats {
@@ -16,18 +19,21 @@ export interface PlayerStats {
   dex: number;
   con: number;
   damage: number[];
+  attackSpeed: number;
 }
 
 export interface EnemyStats {
   health: number[];
   mana: number[];
   damage: number[];
+  attackSpeed: number;
 }
 
 const defaultPlayerStats: PlayerStats = {
   health: [100, 100],
   mana: [100, 100],
   damage: [1, 10],
+  attackSpeed: 2.0,
   str: 10,
   dex: 10,
   con: 10,
@@ -37,6 +43,7 @@ const defaultEnemyStats: EnemyStats = {
   health: [20, 20],
   mana: [20, 20],
   damage: [1, 5],
+  attackSpeed: 1.5,
 };
 
 const useGameStore = create(
@@ -46,10 +53,17 @@ const useGameStore = create(
     enemyStats: defaultEnemyStats,
     setGameIsRunning: () =>
       set((state: GameState) => ({ gameIsRunning: !state.gameIsRunning })),
-    setFightConclusion: (playerHealth: number, enemyHealth: number) => {
+    setFightConclusion: (
+      playerHealth: number | null,
+      enemyHealth: number | null
+    ) => {
       set((state: GameState) => {
-        state.playerStats.health[0] = playerHealth;
-        state.enemyStats.health[0] = enemyHealth;
+        if (playerHealth !== null) {
+          state.playerStats.health[0] = playerHealth;
+        }
+        if (enemyHealth !== null) {
+          state.enemyStats.health[0] = enemyHealth;
+        }
       });
     },
   }))

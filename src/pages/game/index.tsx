@@ -7,7 +7,9 @@ import { Fight } from "~/game/main";
 import useGameStore from "~/game/gameState";
 
 const MainGameScreen: NextPage = () => {
-  const [counter, setCounter] = React.useState(0);
+  // const [counter, setCounter] = React.useState(0);
+  const [playerAttack, setPlayerAttack] = React.useState(0);
+  const [enemyAttack, setEnemyAttack] = React.useState(0);
   const [fightLog, setFightLog] = React.useState<string[]>([]);
 
   const {
@@ -31,37 +33,73 @@ const MainGameScreen: NextPage = () => {
       playerStats !== undefined &&
       enemyStats !== undefined
     ) {
-      const { newPlayerHealth, newEnemyHealth, playerDamage, enemyDamage } =
-        Fight(playerStats, enemyStats);
+      const { newHealth: newEnemyHealth, damage: playerDamage } = Fight(
+        playerStats,
+        enemyStats,
+        true
+      );
 
       let fightMessage = "";
-      if (newPlayerHealth <= 0) {
+      if (newEnemyHealth <= 0) {
         // Set game to resting
         // Regen HP
-        setFightConclusion(0, newEnemyHealth);
-        fightMessage = `Player died, going to rest...`;
-      } else if (newEnemyHealth <= 0) {
-        // Generate new enemy
-        // Give experience
-        // Roll for items
-        setFightConclusion(newPlayerHealth, 0);
+        setFightConclusion(null, 0);
         fightMessage = `Player kills Enemy, handing out rewards...`;
+        setGameIsRunning();
       } else {
-        setFightConclusion(newPlayerHealth, newEnemyHealth);
-        fightMessage = `Player hits for ${playerDamage.toString()}, Enemy hits for ${enemyDamage.toString()}`;
+        setFightConclusion(null, newEnemyHealth);
+        fightMessage = `Player hits Enemy for ${playerDamage.toString()}`;
       }
       setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [counter]);
+  }, [playerAttack]);
+
+  React.useEffect(() => {
+    if (
+      gameIsRunning &&
+      playerStats !== undefined &&
+      enemyStats !== undefined
+    ) {
+      const { newHealth: newPlayerHealth, damage: enemyDamage } = Fight(
+        playerStats,
+        enemyStats,
+        false
+      );
+
+      let fightMessage = "";
+      if (newPlayerHealth <= 0) {
+        // Generate new enemy
+        // Give experience
+        // Roll for items
+        setFightConclusion(newPlayerHealth, null);
+        fightMessage = `Enemy kills Player, resting...`;
+        setGameIsRunning();
+      } else {
+        setFightConclusion(newPlayerHealth, null);
+        fightMessage = `Enemy hits Player for ${enemyDamage.toString()}`;
+      }
+      setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enemyAttack]);
 
   React.useEffect(() => {
     if (gameIsRunning) {
-      const interval = setInterval(() => setCounter((val) => val + 1), 1000);
+      const enemyInterval = setInterval(
+        () => setEnemyAttack((val) => val + 1),
+        enemyStats.attackSpeed * 1000
+      );
+      const playerInterval = setInterval(
+        () => setPlayerAttack((val) => val + 1),
+        playerStats.attackSpeed * 1000
+      );
       return () => {
-        clearInterval(interval);
+        clearInterval(playerInterval);
+        clearInterval(enemyInterval);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameIsRunning]);
 
   const startGame = () => {
@@ -73,7 +111,7 @@ const MainGameScreen: NextPage = () => {
       <button onClick={startGame} className="bg-slate-800 text-white">
         {gameIsRunning ? "STOP THE GAME" : "START THE GAME"}
       </button>
-      <div className="text-white">${counter}</div>
+
       <div className="flex gap-4">
         <PlayerStatsScreen />
         <FightLogScreen fightLog={fightLog} />
