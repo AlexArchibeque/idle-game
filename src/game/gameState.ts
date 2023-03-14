@@ -19,6 +19,8 @@ export interface PlayerStats {
   str: number;
   dex: number;
   con: number;
+  critPercentage: number;
+  critDamage: number;
   damage: number[];
   attackSpeed: number;
 }
@@ -35,6 +37,8 @@ const defaultPlayerStats: PlayerStats = {
   mana: [100, 100],
   damage: [1, 10],
   attackSpeed: 1.0,
+  critPercentage: 0.0,
+  critDamage: 1.5,
   str: 10,
   dex: 10,
   con: 10,

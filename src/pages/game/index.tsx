@@ -31,11 +31,11 @@ const MainGameScreen: NextPage = () => {
 
   React.useEffect(() => {
     if (gameIsRunning) {
-      const { newHealth: newEnemyHealth, damage: playerDamage } = Fight(
-        playerStats,
-        enemyStats,
-        true
-      );
+      const {
+        newHealth: newEnemyHealth,
+        damage: playerDamage,
+        isCrit,
+      } = Fight(playerStats, enemyStats, true);
 
       let fightMessage = "";
       if (newEnemyHealth <= 0) {
@@ -47,7 +47,9 @@ const MainGameScreen: NextPage = () => {
         setGameIsRunning();
       } else {
         setFightConclusion(null, newEnemyHealth);
-        fightMessage = `Player hits Enemy for ${playerDamage.toString()}`;
+        fightMessage = `Player hits Enemy for ${
+          isCrit ? "CRIT! " : ""
+        }${playerDamage.toString()}`;
       }
       setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
     }

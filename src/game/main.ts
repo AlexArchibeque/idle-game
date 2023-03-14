@@ -13,31 +13,33 @@ const Fight = (
   const [minEnemyDamage, maxEnemyDamage] = enemyStats.damage;
 
   if (isPlayerAttack) {
-    const playerDamage =
-      minPlayerDamage &&
-      maxPlayerDamage &&
-      randomInteger(minPlayerDamage, maxPlayerDamage);
-    const newEnemyHealth =
-      (playerDamage &&
-        enemyStats.health[0] &&
-        enemyStats.health[0] - playerDamage) ||
+    let playerDamage =
+      (minPlayerDamage &&
+        maxPlayerDamage &&
+        randomInteger(minPlayerDamage, maxPlayerDamage)) ||
       0;
+
+    // Crit calculations
+    const isCrit = Math.random() <= playerStats.critPercentage;
+    if (isCrit) playerDamage = Math.ceil(playerDamage * playerStats.critDamage);
+
+    const newEnemyHealth =
+      (enemyStats.health[0] && enemyStats.health[0] - playerDamage) || 0;
 
     return {
       newHealth: newEnemyHealth,
       damage: playerDamage || "0",
+      isCrit,
     };
   } else {
     const enemyDamage =
-      minEnemyDamage &&
-      maxEnemyDamage &&
-      randomInteger(minEnemyDamage, maxEnemyDamage);
+      (minEnemyDamage &&
+        maxEnemyDamage &&
+        randomInteger(minEnemyDamage, maxEnemyDamage)) ||
+      0;
 
     const newPlayerHealth =
-      (enemyDamage &&
-        playerStats.health[0] &&
-        playerStats.health[0] - enemyDamage) ||
-      0;
+      (playerStats.health[0] && playerStats.health[0] - enemyDamage) || 0;
 
     return {
       newHealth: newPlayerHealth,
