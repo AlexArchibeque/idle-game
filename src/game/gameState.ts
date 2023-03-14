@@ -33,7 +33,7 @@ export interface EnemyStats {
 const defaultPlayerStats: PlayerStats = {
   health: [100, 100],
   mana: [100, 100],
-  damage: [8, 10],
+  damage: [1, 10],
   attackSpeed: 1.0,
   str: 10,
   dex: 10,

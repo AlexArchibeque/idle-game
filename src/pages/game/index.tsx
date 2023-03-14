@@ -83,7 +83,7 @@ const MainGameScreen: NextPage = () => {
     if (gameIsRunning) {
       let enemyAttackSpeedInMS = enemyStats.attackSpeed * 1000;
       if (enemyStats.attackSpeed === playerStats.attackSpeed) {
-        // Fix for hitting when dead.
+        // Fix for over-hitting when dead.
         enemyAttackSpeedInMS = enemyStats.attackSpeed * 1020;
       }
       const playerAttackSpeedInMS = playerStats.attackSpeed * 1000;
@@ -124,7 +124,7 @@ const MainGameScreen: NextPage = () => {
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
       <button onClick={startGame} className="bg-slate-800 text-white">
-        {gameIsRunning ? "STOP THE GAME" : "START THE GAME"}
+        {gameIsRunning ? "DONT FIGHT" : "FIGHT"}
       </button>
 
       <div className="flex gap-4">
