@@ -11,7 +11,6 @@ const MainGameScreen: NextPage = () => {
   const [playerAttack, setPlayerAttack] = React.useState(0);
   const [enemyAttack, setEnemyAttack] = React.useState(0);
   const [fightLog, setFightLog] = React.useState<string[]>([]);
-  const [intervals, setIntervals] = React.useState<NodeJS.Timer[]>([]);
 
   const {
     setGameIsRunning,
@@ -20,11 +19,6 @@ const MainGameScreen: NextPage = () => {
     enemyStats,
     setFightConclusion,
   } = useGameStore();
-
-  const clearIntervals = () => {
-    clearInterval(intervals[0]);
-    clearInterval(intervals[1]);
-  };
 
   const checkFightLogSize = (log: string[]): string[] => {
     if (log.length > 50) {
@@ -52,7 +46,6 @@ const MainGameScreen: NextPage = () => {
         setFightConclusion(null, 0);
         fightMessage = `Player kills Enemy, handing out rewards...`;
         setGameIsRunning();
-        clearIntervals();
       } else {
         setFightConclusion(null, newEnemyHealth);
         fightMessage = `Player hits Enemy for ${playerDamage.toString()}`;
@@ -82,7 +75,6 @@ const MainGameScreen: NextPage = () => {
         setFightConclusion(newPlayerHealth, null);
         fightMessage = `Enemy kills Player, resting...`;
         setGameIsRunning();
-        clearIntervals();
       } else {
         setFightConclusion(newPlayerHealth, null);
         fightMessage = `Enemy hits Player for ${enemyDamage.toString()}`;
@@ -103,7 +95,6 @@ const MainGameScreen: NextPage = () => {
         playerStats.attackSpeed * 1000
       );
 
-      setIntervals([playerInterval, enemyInterval]);
       return () => {
         clearInterval(playerInterval);
         clearInterval(enemyInterval);
