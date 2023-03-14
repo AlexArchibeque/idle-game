@@ -13,6 +13,9 @@ const MainGameScreen: NextPage = () => {
   });
   const [fightLog, setFightLog] = React.useState<string[]>([]);
 
+  const [enemyProgressBar, setEnemyProgressBar] = React.useState(0);
+  const [playerProgressBar, setPlayerProgressBar] = React.useState(0);
+
   const {
     setGameIsRunning,
     gameIsRunning,
@@ -37,21 +40,28 @@ const MainGameScreen: NextPage = () => {
         isCrit,
       } = Fight(playerStats, enemyStats, true);
 
-      let fightMessage = "";
+      const fightMessages: string[] = [];
+      fightMessages.push(
+        `Player hits Enemy for ${
+          isCrit ? "CRIT! " : ""
+        }${playerDamage.toString()}`
+      );
       if (newEnemyHealth <= 0) {
         // Set game to resting
         // Regen HP
         setFightConclusion(null, 0);
-        fightMessage = `Player kills Enemy, handing out rewards...`;
+        fightMessages.push(`Player kills Enemy, handing out rewards...`);
         setNewEnemy();
         setGameIsRunning();
+        setEnemyProgressBar(0);
       } else {
         setFightConclusion(null, newEnemyHealth);
-        fightMessage = `Player hits Enemy for ${
-          isCrit ? "CRIT! " : ""
-        }${playerDamage.toString()}`;
       }
-      setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
+      setFightLog((log: string[]) => [
+        ...checkFightLogSize(log),
+        ...fightMessages,
+      ]);
+      setPlayerProgressBar(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attacks.playerAttack]);
@@ -72,11 +82,13 @@ const MainGameScreen: NextPage = () => {
         setFightConclusion(newPlayerHealth, null);
         fightMessage = `Enemy kills Player, resting...`;
         setGameIsRunning();
+        setPlayerProgressBar(0);
       } else {
         setFightConclusion(newPlayerHealth, null);
         fightMessage = `Enemy hits Player for ${enemyDamage.toString()}`;
       }
       setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
+      setEnemyProgressBar(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attacks.enemyAttack]);
@@ -84,36 +96,56 @@ const MainGameScreen: NextPage = () => {
   React.useEffect(() => {
     if (gameIsRunning) {
       let enemyAttackSpeedInMS = enemyStats.attackSpeed * 1000;
-      if (enemyStats.attackSpeed === playerStats.attackSpeed) {
+      if (
+        enemyStats.attackSpeed === playerStats.attackSpeed ||
+        playerStats.attackSpeed % enemyStats.attackSpeed === 0
+      ) {
         // Fix for over-hitting when dead.
         enemyAttackSpeedInMS = enemyStats.attackSpeed * 1020;
       }
       const playerAttackSpeedInMS = playerStats.attackSpeed * 1000;
 
-      const enemyInterval = setInterval(
+      // Enemy attack interval and progress bar
+      const enemyInterval = setInterval(() => {
+        setAttacks((prevState) => {
+          return {
+            ...prevState,
+            enemyAttack: prevState.enemyAttack + 1,
+          };
+        });
+      }, enemyAttackSpeedInMS);
+
+      const enemyProgressBar = setInterval(
         () =>
-          setAttacks((prevState) => {
-            return {
-              ...prevState,
-              enemyAttack: prevState.enemyAttack + 1,
-            };
-          }),
-        enemyAttackSpeedInMS
+          setEnemyProgressBar((prevState) =>
+            prevState < 100 ? prevState + 10 : prevState + 0
+          ),
+        Math.floor(enemyAttackSpeedInMS / 10)
       );
-      const playerInterval = setInterval(
+
+      // Player attack interval and progress bar
+      const playerInterval = setInterval(() => {
+        setAttacks((prevState) => {
+          return {
+            ...prevState,
+            playerAttack: prevState.playerAttack + 1,
+          };
+        });
+      }, playerAttackSpeedInMS);
+
+      const playerProgressBar = setInterval(
         () =>
-          setAttacks((prevState) => {
-            return {
-              ...prevState,
-              playerAttack: prevState.playerAttack + 1,
-            };
-          }),
-        playerAttackSpeedInMS
+          setPlayerProgressBar((prevState) =>
+            prevState < 100 ? prevState + 10 : prevState + 0
+          ),
+        Math.floor(playerAttackSpeedInMS / 10)
       );
 
       return () => {
         clearInterval(playerInterval);
         clearInterval(enemyInterval);
+        clearInterval(playerProgressBar);
+        clearInterval(enemyProgressBar);
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,9 +162,9 @@ const MainGameScreen: NextPage = () => {
       </button>
 
       <div className="flex gap-4">
-        <PlayerStatsScreen />
+        <PlayerStatsScreen playerProgressBar={playerProgressBar} />
         <FightLogScreen fightLog={fightLog} />
-        <EnemyStatsScreen />
+        <EnemyStatsScreen enemyProgressBar={enemyProgressBar} />
       </div>
     </main>
   );
