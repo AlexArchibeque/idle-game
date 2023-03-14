@@ -32,8 +32,8 @@ export interface EnemyStats {
 const defaultPlayerStats: PlayerStats = {
   health: [100, 100],
   mana: [100, 100],
-  damage: [1, 10],
-  attackSpeed: 2.0,
+  damage: [8, 10],
+  attackSpeed: 1.0,
   str: 10,
   dex: 10,
   con: 10,
@@ -43,7 +43,7 @@ const defaultEnemyStats: EnemyStats = {
   health: [20, 20],
   mana: [20, 20],
   damage: [1, 5],
-  attackSpeed: 1.5,
+  attackSpeed: 1.0,
 };
 
 const useGameStore = create(
