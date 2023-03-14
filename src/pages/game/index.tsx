@@ -7,9 +7,10 @@ import { Fight } from "~/game/main";
 import useGameStore from "~/game/gameState";
 
 const MainGameScreen: NextPage = () => {
-  // const [counter, setCounter] = React.useState(0);
-  const [playerAttack, setPlayerAttack] = React.useState(0);
-  const [enemyAttack, setEnemyAttack] = React.useState(0);
+  const [attacks, setAttacks] = React.useState({
+    enemyAttack: 0,
+    playerAttack: 0,
+  });
   const [fightLog, setFightLog] = React.useState<string[]>([]);
 
   const {
@@ -18,6 +19,7 @@ const MainGameScreen: NextPage = () => {
     playerStats,
     enemyStats,
     setFightConclusion,
+    setNewEnemy,
   } = useGameStore();
 
   const checkFightLogSize = (log: string[]): string[] => {
@@ -28,11 +30,7 @@ const MainGameScreen: NextPage = () => {
   };
 
   React.useEffect(() => {
-    if (
-      gameIsRunning &&
-      playerStats !== undefined &&
-      enemyStats !== undefined
-    ) {
+    if (gameIsRunning) {
       const { newHealth: newEnemyHealth, damage: playerDamage } = Fight(
         playerStats,
         enemyStats,
@@ -45,6 +43,7 @@ const MainGameScreen: NextPage = () => {
         // Regen HP
         setFightConclusion(null, 0);
         fightMessage = `Player kills Enemy, handing out rewards...`;
+        setNewEnemy();
         setGameIsRunning();
       } else {
         setFightConclusion(null, newEnemyHealth);
@@ -53,14 +52,10 @@ const MainGameScreen: NextPage = () => {
       setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerAttack]);
+  }, [attacks.playerAttack]);
 
   React.useEffect(() => {
-    if (
-      gameIsRunning &&
-      playerStats !== undefined &&
-      enemyStats !== undefined
-    ) {
+    if (gameIsRunning) {
       const { newHealth: newPlayerHealth, damage: enemyDamage } = Fight(
         playerStats,
         enemyStats,
@@ -82,17 +77,36 @@ const MainGameScreen: NextPage = () => {
       setFightLog((log: string[]) => [...checkFightLogSize(log), fightMessage]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enemyAttack]);
+  }, [attacks.enemyAttack]);
 
   React.useEffect(() => {
     if (gameIsRunning) {
+      let enemyAttackSpeedInMS = enemyStats.attackSpeed * 1000;
+      if (enemyStats.attackSpeed === playerStats.attackSpeed) {
+        // Fix for hitting when dead.
+        enemyAttackSpeedInMS = enemyStats.attackSpeed * 1020;
+      }
+      const playerAttackSpeedInMS = playerStats.attackSpeed * 1000;
+
       const enemyInterval = setInterval(
-        () => setEnemyAttack((val) => val + 1),
-        enemyStats.attackSpeed * 1000
+        () =>
+          setAttacks((prevState) => {
+            return {
+              ...prevState,
+              enemyAttack: prevState.enemyAttack + 1,
+            };
+          }),
+        enemyAttackSpeedInMS
       );
       const playerInterval = setInterval(
-        () => setPlayerAttack((val) => val + 1),
-        playerStats.attackSpeed * 1000
+        () =>
+          setAttacks((prevState) => {
+            return {
+              ...prevState,
+              playerAttack: prevState.playerAttack + 1,
+            };
+          }),
+        playerAttackSpeedInMS
       );
 
       return () => {

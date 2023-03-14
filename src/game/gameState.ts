@@ -10,6 +10,7 @@ interface GameState {
     playerHealth: number | null,
     enemyHealth: number | null
   ) => void;
+  setNewEnemy: () => void;
 }
 
 export interface PlayerStats {
@@ -66,6 +67,7 @@ const useGameStore = create(
         }
       });
     },
+    setNewEnemy: () => set(() => ({ enemyStats: defaultEnemyStats })),
   }))
 );
 
