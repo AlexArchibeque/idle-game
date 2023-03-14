@@ -31,9 +31,7 @@ const PlayerStatsScreen = ({
   return (
     <main className={containerStyles}>
       <div>PLAYER</div>
-      <div>Str: {playerStats.str}</div>
-      <div>Dex: {playerStats.dex}</div>
-      <div>Con: {playerStats.con}</div>
+      <ProgressBar percentage={playerProgressBar} />
       <div>Health</div>
       <div>
         {currentHealth}/{maxHealth}
@@ -42,8 +40,11 @@ const PlayerStatsScreen = ({
       <div>
         {currentMana}/{maxMana}
       </div>
-
-      <ProgressBar percentage={playerProgressBar} />
+      <div>Str: {playerStats.str}</div>
+      <div>Dex: {playerStats.dex}</div>
+      <div>Con: {playerStats.con}</div>
+      <div>Crit: {playerStats.critPercentage * 100}%</div>
+      <div>Crit Dmg: {playerStats.critDamage * 100}%</div>
     </main>
   );
 };
@@ -59,6 +60,7 @@ const EnemyStatsScreen = ({
   return (
     <main className={containerStyles}>
       <div>MAJOR ENEMY</div>
+      <ProgressBar percentage={enemyProgressBar} />
       <div>Health</div>
       <div>
         {currentHealth}/{maxHealth}
@@ -67,8 +69,6 @@ const EnemyStatsScreen = ({
       <div>
         {currentMana}/{maxMana}
       </div>
-
-      <ProgressBar percentage={enemyProgressBar} />
     </main>
   );
 };
